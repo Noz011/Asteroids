@@ -7,6 +7,8 @@ from constants import LINE_WIDTH , ASTEROID_MIN_RADIUS
 class Asteroid(CircleShape):
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
+        self.surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        self.mask = pygame.mask.from_surface(self.surface)
     
     def split(self):
         self.kill()
@@ -21,6 +23,9 @@ class Asteroid(CircleShape):
         asteroid_two = Asteroid(self.position.x, self.position.y, radius_new)
         asteroid_one.velocity = rotation_one * 1.2
         asteroid_two.velocity = rotation_two * 1.2
+
+    def bounce(self):
+        if 
 
 
     def update(self, dt):

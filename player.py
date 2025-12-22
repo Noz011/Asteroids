@@ -41,6 +41,9 @@ class Player(CircleShape):
         else:
             self.shot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
             shot1 = Shot(self.position.x, self.position.y, 10)
+
+            shot1.rotate_bullet(self.rotation)
+
             shot_vector = pygame.Vector2(0, 1)
             shot_vector_rotated = shot_vector.rotate(self.rotation)
             shot_vector_rotated_fast = shot_vector_rotated * PLAYER_SHOOT_SPEED
@@ -67,6 +70,7 @@ class Player(CircleShape):
     def update(self, dt):
         self.shot_cooldown -= dt
         self.grace_period -= dt
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
