@@ -7,8 +7,10 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
 from rectangle_hud import RectangleHud
-from score import Score
+from hud import Hud
+from hudelement import HudElement
 
+TRIANGLES = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
 
 def main():
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
@@ -40,8 +42,17 @@ def main():
     clock = pygame.time.Clock()
 
     #Hud
-    timerScore = Score(SCREEN_WIDTH/2, 10, True)
-    pointScore = Score(SCREEN_WIDTH-50, 10)
+    hud = Hud()
+    h1 = HudElement(pygame.font.Font(None, 30),(SCREEN_WIDTH/2), 10, 2)
+    h2 = HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1)
+    h3 = HudElement(TRIANGLES,-SCREEN_WIDTH/2, SCREEN_WIDTH-50, 3)
+    hud.append(h1)
+    hud.append(h2)
+    hud.append(h3)
+
+    player1.addHudElement(h3)
+
+    #playerLives = Hud(10, 10)
 
     dt = 0
     while(True):
@@ -52,11 +63,9 @@ def main():
 
         screen.fill("black")
 
-        timerScore.update()
-        pointScore.update()
-        timerScore.draw(screen)
-        pointScore.draw(screen)
-
+        hud.update()
+        hud.draw(screen)
+        
         #Updating the objects and drawing the screen
         updatable.update(dt)
         for thing in drawable:
@@ -64,9 +73,7 @@ def main():
             
         for asteroid in asteroids:
             if asteroid.collides_with(player1):
-                log_event("player_hit")
-                print("Game over!")
-                sys.exit()
+                player1.hit()
             for shot in shots:
                 if asteroid.collides_with(shot):
                     log_event("asteroid_shot")
