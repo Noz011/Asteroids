@@ -16,7 +16,6 @@ class Shot(RectangleShape):
         #rotate Rectangle to Player rotation
         old_center = self.rectangle.center
 
-        print(player_rotation)
         self.surface = pygame.transform.rotate(self.base_surface, -player_rotation)
 
         #update rect from rotated surface

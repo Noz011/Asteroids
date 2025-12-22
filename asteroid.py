@@ -24,9 +24,6 @@ class Asteroid(CircleShape):
         asteroid_one.velocity = rotation_one * 1.2
         asteroid_two.velocity = rotation_two * 1.2
 
-    def bounce(self):
-        if 
-
 
     def update(self, dt):
         unit_vector = pygame.Vector2(0, -1)

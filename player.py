@@ -8,6 +8,7 @@ from hudelement import HudElement
 
 
 class Player(CircleShape):
+    INVULN_EVENT = pygame.USEREVENT + 1
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.triangles = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
@@ -17,10 +18,14 @@ class Player(CircleShape):
         self.shot_cooldown = 0
         self.grace_period = PLAYER_GRACE_PERIOD
 
-
+        self.visable = True
         self.hudElements = []
 
     # in the Player class
+    def handle_event(self, event):
+        if event.type == self.INVULN_EVENT:
+            self.visable = not self.visable
+
     def triangle(self):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         right = pygame.Vector2(0, 1).rotate(self.rotation + 90) * self.radius / 1.5
@@ -48,18 +53,25 @@ class Player(CircleShape):
             shot_vector_rotated = shot_vector.rotate(self.rotation)
             shot_vector_rotated_fast = shot_vector_rotated * PLAYER_SHOOT_SPEED
             shot1.velocity = shot_vector_rotated_fast
+
+    
     
     def hit(self):
         if self.lives <= 0:
             log_event("player_hit")
             print("Game over!")
             sys.exit()
+
         if self.grace_period <= 0:
             self.lives -= 1
             self.hudElement.hudElement = self.hudElement.hudElement[:-1]
-            print(self.hudElement.hudElement)
-            print(self.lives)
+
+            pygame.time.set_timer(self.INVULN_EVENT, 200)
+        
         self.grace_period = PLAYER_GRACE_PERIOD
+
+
+
 
     def rotate(self, dt):
         self.rotation += PLAYER_TURN_SPEED * dt
@@ -67,10 +79,13 @@ class Player(CircleShape):
     def addHudElement(self, hudElement):
         self.hudElements.append(hudElement)
     
+
     def update(self, dt):
         self.shot_cooldown -= dt
         self.grace_period -= dt
-
+        if self.grace_period <= 0:
+            pygame.time.set_timer(self.INVULN_EVENT, 0)
+            self.visable = True
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -88,4 +103,10 @@ class Player(CircleShape):
 
 
     def draw(self, screen):
-        pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)
+        color = ""
+        if self.visable:
+            color = "white"
+        else:
+            color = "black"
+    
+        pygame.draw.polygon(screen, color, self.triangle(), LINE_WIDTH)
