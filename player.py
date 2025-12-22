@@ -1,14 +1,17 @@
 import sys
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, PLAYER_GRACE_PERIOD
+from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, PLAYER_GRACE_PERIOD, SCREEN_WIDTH
 from shot import Shot
 from circleshape import CircleShape
 import pygame
 from logger import log_state, log_event
+from hudelement import HudElement
+
 
 class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
-
+        self.triangles = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
+        self.hudElement = HudElement(self.triangles, -SCREEN_WIDTH/2, SCREEN_WIDTH-50, 3)
         self.lives = 3
         self.rotation = 0
         self.shot_cooldown = 0
@@ -37,7 +40,7 @@ class Player(CircleShape):
             pass
         else:
             self.shot_cooldown = PLAYER_SHOOT_COOLDOWN_SECONDS
-            shot1 = Shot(self.position.x, self.position.y)
+            shot1 = Shot(self.position.x, self.position.y, 10)
             shot_vector = pygame.Vector2(0, 1)
             shot_vector_rotated = shot_vector.rotate(self.rotation)
             shot_vector_rotated_fast = shot_vector_rotated * PLAYER_SHOOT_SPEED
@@ -50,8 +53,8 @@ class Player(CircleShape):
             sys.exit()
         if self.grace_period <= 0:
             self.lives -= 1
-            if self.hudElements:
-                self.hudElements[0].hudElement = self.hudElements[0].hudElement[:-1]
+            self.hudElement.hudElement = self.hudElement.hudElement[:-1]
+            print(self.hudElement.hudElement)
             print(self.lives)
         self.grace_period = PLAYER_GRACE_PERIOD
 
@@ -76,6 +79,9 @@ class Player(CircleShape):
             self.move(-dt)
         if keys[pygame.K_SPACE]:
             self.shoot()
+
+        
+
 
     def draw(self, screen):
         pygame.draw.polygon(screen, "white", self.triangle(), LINE_WIDTH)

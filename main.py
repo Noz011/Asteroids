@@ -6,11 +6,10 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
-from rectangle_hud import RectangleHud
 from hud import Hud
 from hudelement import HudElement
 
-TRIANGLES = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
+
 
 def main():
     print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
@@ -24,7 +23,7 @@ def main():
     shots = pygame.sprite.Group()
     #rectangle_hud = pygame.sprite.Group()
     
-
+    play = False
 
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
@@ -41,50 +40,65 @@ def main():
     #Creating Clock object
     clock = pygame.time.Clock()
 
-    #Hud
-    hud = Hud()
-    h1 = HudElement(pygame.font.Font(None, 30),(SCREEN_WIDTH/2), 10, 2)
-    h2 = HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1)
-    h3 = HudElement(TRIANGLES,-SCREEN_WIDTH/2, SCREEN_WIDTH-50, 3)
-    hud.append(h1)
-    hud.append(h2)
-    hud.append(h3)
+    Hud
+    hud_main_menu = Hud()
+    hud_main_menu.append(HudElement(pygame.Rect(0, 100, SCREEN_WIDTH/2, 100), 200,200, 4))
+    hud_main_menu.append(HudElement(pygame.Rect(0, 300, SCREEN_WIDTH/2, 100), 200,200, 4))
+    hud_main_menu.append(HudElement(pygame.Rect(0, 500, SCREEN_WIDTH/2, 100), 200,200, 4))
 
-    player1.addHudElement(h3)
+    hud_game = Hud()
+    hud_game.append(HudElement(pygame.font.Font(None, 30),(SCREEN_WIDTH/2), 10, 2))
+    hud_game.append(HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1))
+    hud_game.append(player1.hudElement)
+
+    
 
     #playerLives = Hud(10, 10)
-
-    dt = 0
     while(True):
         log_state()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+        dt = 0
+        screen.fill("grey")
+        hud_main_menu.update()
+        hud_main_menu.draw(screen)
 
-        screen.fill("black")
-
-        hud.update()
-        hud.draw(screen)
-        
-        #Updating the objects and drawing the screen
-        updatable.update(dt)
-        for thing in drawable:
-            thing.draw(screen)
-            
-        for asteroid in asteroids:
-            if asteroid.collides_with(player1):
-                player1.hit()
-            for shot in shots:
-                if asteroid.collides_with(shot):
-                    log_event("asteroid_shot")
-                    asteroid.split()
-                    shot.kill()
-
-        
-
+        play = hud_main_menu.hudElements[0].clicked
         pygame.display.flip()
-        #setting Framerate
-        dt = clock.tick(60) / 1000
+
+        while(play):
+            log_state()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+            
+
+            screen.fill("black")
+
+            hud_game.update()
+            hud_game.draw(screen)
+            
+            
+            #Updating the objects and drawing the screen
+            updatable.update(dt)
+            for thing in drawable:
+                thing.draw(screen)
+                
+            for asteroid in asteroids:
+                if asteroid.collides_with(player1):
+                    player1.hit()
+                for shot in shots:
+                    if shot.collides_with_circle(asteroid):
+                        log_event("asteroid_shot")
+                        asteroid.split()
+                        shot.kill()
+
+            
+
+            pygame.display.flip()
+            #setting Framerate
+            dt = clock.tick(60) / 1000
 
 if __name__ == "__main__":
     main()
