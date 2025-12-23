@@ -2,7 +2,7 @@ import json
 import pygame
 import string
 import math
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
+from bin.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 
 
 class Hud():

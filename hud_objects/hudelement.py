@@ -2,7 +2,7 @@ import json
 import pygame
 import string
 import math
-from constants import LINE_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT
+from bin.constants import LINE_WIDTH, SCREEN_WIDTH, SCREEN_HEIGHT
 
 WHITE = (255, 255, 255)
 
@@ -43,7 +43,7 @@ class HudElement():
             case 4:
                 
                 self.clicked = self.checkButtonClick()
-            case _:
+            case default:
                 self.checkShotCollision()
         return
             

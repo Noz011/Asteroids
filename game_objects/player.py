@@ -1,10 +1,10 @@
 import sys
-from constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, PLAYER_GRACE_PERIOD, SCREEN_WIDTH
-from shot import Shot
-from circleshape import CircleShape
+from bin.constants import PLAYER_RADIUS, LINE_WIDTH, PLAYER_TURN_SPEED, PLAYER_SPEED, PLAYER_SHOOT_SPEED, PLAYER_SHOOT_COOLDOWN_SECONDS, PLAYER_GRACE_PERIOD, SCREEN_WIDTH
+from game_objects.shot import Shot
+from game_objects.shapes.circleshape import CircleShape
 import pygame
-from logger import log_state, log_event
-from hudelement import HudElement
+from bin.logger import log_state, log_event
+from hud_objects.hudelement import HudElement
 
 
 class Player(CircleShape):
@@ -13,7 +13,7 @@ class Player(CircleShape):
         super().__init__(x, y, PLAYER_RADIUS)
         self.triangles = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
         self.hudElement = HudElement(self.triangles, -SCREEN_WIDTH/2, SCREEN_WIDTH-50, 3)
-        self.lives = 3
+        self.lives = 1
         self.rotation = 0
         self.shot_cooldown = 0
         self.grace_period = PLAYER_GRACE_PERIOD
@@ -60,7 +60,7 @@ class Player(CircleShape):
         if self.lives <= 0:
             log_event("player_hit")
             print("Game over!")
-            sys.exit()
+
 
         if self.grace_period <= 0:
             self.lives -= 1

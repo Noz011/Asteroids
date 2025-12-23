@@ -1,106 +1,44 @@
 import pygame
-import sys
-from constants import SCREEN_WIDTH, SCREEN_HEIGHT
-from logger import log_state, log_event
-from player import Player
-from asteroid import Asteroid
-from asteroidfield import AsteroidField
-from shot import Shot
-from hud import Hud
-from hudelement import HudElement
-
+from game_states.menu_state import MenuState
+from game_states.game_state import GameState
+from game_states.death_state import DeathState
+from bin.constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 def main():
-    print(f"Starting Asteroids with pygame version: {pygame.version.ver}")
-    print(f"Screen width: {SCREEN_WIDTH}")
-    print(f"Screen height: {SCREEN_HEIGHT}")
-
-    #Group definitions have to be called before creating Player object
-    updatable = pygame.sprite.Group()
-    drawable = pygame.sprite.Group()
-    asteroids = pygame.sprite.Group()
-    shots = pygame.sprite.Group()
-    events = pygame.sprite.Group()
-    #rectangle_hud = pygame.sprite.Group()
-    
-    play = False
-
-    Player.containers = (updatable, drawable, events)
-    Asteroid.containers = (asteroids, updatable, drawable)
-    AsteroidField.containers = (updatable)
-    Shot.containers = (shots, updatable, drawable)
-    #RectangleHud.containers = (updatable, drawable)
-    #Creating objects
-    player1 = Player(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-    asteroidField = AsteroidField()
-    #initialising Pygame
     pygame.init()
-    #Setting screen resolution
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    #Creating Clock object
     clock = pygame.time.Clock()
 
-    Hud
-    hud_main_menu = Hud()
-    hud_main_menu.append(HudElement(pygame.Rect(0, 100, SCREEN_WIDTH/2, 100), 200,200, 4))
-    hud_main_menu.append(HudElement(pygame.Rect(0, 300, SCREEN_WIDTH/2, 100), 200,200, 4))
-    hud_main_menu.append(HudElement(pygame.Rect(0, 500, SCREEN_WIDTH/2, 100), 200,200, 4))
+    states = {
+        "menu" : MenuState(),
+        "game" : GameState(),
+        "death": DeathState()
+    }
 
-    hud_game = Hud()
-    hud_game.append(HudElement(pygame.font.Font(None, 30),(SCREEN_WIDTH/2), 10, 2))
-    hud_game.append(HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1))
-    hud_game.append(player1.hudElement)
-
+    current = states["menu"]
+    running = True
     
+    while(running):
+        dt = clock.tick(60) / 1000
 
-    #playerLives = Hud(10, 10)
-    while(True):
-        log_state()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
-        dt = 0
-        screen.fill("grey")
-        hud_main_menu.update()
-        hud_main_menu.draw(screen)
+                running = False
+            else:
+                next_state = current.handle_event(event)
+                if next_state:
+                    current = states[next_state]
+        
+        next_state = current.update(dt)
+        if next_state:
+            current = states[next_state]
 
-        play = hud_main_menu.hudElements[0].clicked
+        current.draw(screen)
         pygame.display.flip()
+    pygame.quit()
 
-        while(play):
-            log_state()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return
-                player1.handle_event(event)
-            
-
-            screen.fill("black")
-
-            hud_game.update()
-            hud_game.draw(screen)
-            
-            
-            #Updating the objects and drawing the screen
-            updatable.update(dt)
-            for thing in drawable:
-                thing.draw(screen)
-            
-            for asteroid in asteroids:
-                if asteroid.collides_with(player1):
-                    player1.hit()
-                for shot in shots:
-                    if shot.collides_with_circle(asteroid):
-                        log_event("asteroid_shot")
-                        asteroid.split()
-                        shot.kill()
-
-            
-
-            pygame.display.flip()
-            #setting Framerate
-            dt = clock.tick(60) / 1000
 
 if __name__ == "__main__":
     main()

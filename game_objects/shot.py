@@ -1,6 +1,6 @@
 import pygame
-from rectangleshape import RectangleShape
-from constants import SHOOT_RADIUS
+from game_objects.shapes.rectangleshape import RectangleShape
+from bin.constants import SHOOT_RADIUS
 
 class Shot(RectangleShape):
     def __init__(self, x, y, height):
