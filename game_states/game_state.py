@@ -4,9 +4,9 @@ from game_objects.player import Player
 from game_objects.asteroid import Asteroid
 from game_objects.asteroidfield import AsteroidField
 from game_objects.shot import Shot
-from hud_objects.hudelement import HudElement
 from hud_objects.hud import Hud
 from bin.constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from hud_objects.texthud import TextHud
 
 class GameState(State):
     def __init__(self):
@@ -27,8 +27,8 @@ class GameState(State):
         self.asteroidField = AsteroidField()
 
         self.hud = Hud()
-        self.hud.append(HudElement(pygame.font.Font(None, 30),(SCREEN_WIDTH/2), 10, 2))
-        self.hud.append(HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1))
+        self.hud.append(TextHud((SCREEN_WIDTH/2), 10, ""))
+        #self.hud.append(HudElement(pygame.font.Font(None, 30), SCREEN_WIDTH-50, 10, 1))
         self.hud.append(self.player.hudElement)
 
     def handle_event(self, event):

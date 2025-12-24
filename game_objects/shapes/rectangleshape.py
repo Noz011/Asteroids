@@ -24,13 +24,6 @@ class RectangleShape(pygame.sprite.Sprite):
         if distance <= other.radius:
             return True
         return False
-    
-    
-    def get_width(self):
-        return self.dimension.width
-    
-    def get_height(self):
-        return self.dimension.height
 
     def update(self,dt):
         pass

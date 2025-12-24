@@ -4,7 +4,7 @@ from game_objects.shot import Shot
 from game_objects.shapes.circleshape import CircleShape
 import pygame
 from bin.logger import log_state, log_event
-from hud_objects.hudelement import HudElement
+from hud_objects.trianglehud import TriangleHud
 
 
 class Player(CircleShape):
@@ -12,8 +12,8 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.triangles = [(5, 20), (10, 10), (15, 20)], [(25, 20), (30, 10), (35, 20)], [(45, 20), (50, 10), (55, 20)]
-        self.hudElement = HudElement(self.triangles, -SCREEN_WIDTH/2, SCREEN_WIDTH-50, 3)
-        self.lives = 1
+        self.hudElement = TriangleHud(self.triangles, -SCREEN_WIDTH/2, SCREEN_WIDTH-50)
+        self.lives = 3
         self.rotation = 0
         self.shot_cooldown = 0
         self.grace_period = PLAYER_GRACE_PERIOD
@@ -64,7 +64,7 @@ class Player(CircleShape):
 
         if self.grace_period <= 0:
             self.lives -= 1
-            self.hudElement.hudElement = self.hudElement.hudElement[:-1]
+            self.hudElement = self.hudElement.triangles[:-1]
 
             pygame.time.set_timer(self.INVULN_EVENT, 200)
         
